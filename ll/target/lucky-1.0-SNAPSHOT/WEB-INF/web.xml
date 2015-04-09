@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <display-name>lucky</display-name>
+    <!--spring加载-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:/spring/applicationContext.xml,
+            classpath*:/spring/applicationContext-shiro.xml
+            classpath*:/spring/applicationContext-quartz.xml
+        </param-value>
+    </context-param>
+
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+        <init-param>
+            <param-name>entityManagerFactoryBeanName</param-name>
+            <param-value>entityManagerFactory</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--所有的请求都变成utf-8编码-->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!--shiro权限控制-->
+    <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!--spring mvc-->
+    <servlet>
+        <servlet-name>springServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:/spring/spring-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+
+    <!--session过期时间-->
+
+    <session-config>
+        <session-timeout>20</session-timeout>
+    </session-config>
+
+    <!--错误指向-->
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <!--captcha 验证码  -->
+    <servlet>
+        <servlet-name>StickyCaptcha</servlet-name>
+        <servlet-class>com.ttpod.lucky.tool.SimpleCaptchaFilter</servlet-class>
+        <init-param>
+            <param-name>width</param-name>
+            <param-value>200</param-value>
+        </init-param>
+        <init-param>
+            <param-name>height</param-name>
+            <param-value>70</param-value>
+        </init-param>
+        <!-- 不加干扰线 -->
+        <init-param>
+            <param-name>noise</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <!-- 意思是3个单词，3个数字 -->
+        <init-param>
+            <param-name>text</param-name>
+            <param-value>word:3,number:3</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StickyCaptcha</servlet-name>
+        <url-pattern>/stickyImg</url-pattern>
+    </servlet-mapping>
+
+    <!--<servlet>-->
+    <!--<servlet-name>SimpleCaptcha</servlet-name>-->
+    <!--<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>-->
+    <!--<init-param>-->
+    <!--<param-name>captcha-width</param-name>-->
+    <!--<param-value>300</param-value>-->
+    <!--</init-param>-->
+    <!--<init-param>-->
+    <!--<param-name>captcha-height</param-name>-->
+    <!--<param-value>100</param-value>-->
+    <!--</init-param>-->
+    <!--</servlet>-->
+    <!--<servlet-mapping>-->
+    <!--<servlet-name>SimpleCaptcha</servlet-name>-->
+    <!--<url-pattern>/simpleCaptcha.png</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <!--<servlet>-->
+    <!--<servlet-name>StickyCaptcha</servlet-name>-->
+    <!--<servlet-class>nl.captcha.servlet.StickyCaptchaServlet</servlet-class>-->
+
+    <!--<init-param>-->
+    <!--&lt;!&ndash; Optional; defaults to 200. &ndash;&gt;-->
+    <!--<param-name>captcha-width</param-name>-->
+    <!--<param-value>250</param-value>-->
+    <!--</init-param>-->
+    <!--<init-param>-->
+    <!--&lt;!&ndash; Optional; defaults to 50. &ndash;&gt;-->
+    <!--<param-name>captcha-height</param-name>-->
+    <!--<param-value>100</param-value>-->
+    <!--</init-param>-->
+    <!--<init-param>-->
+    <!--&lt;!&ndash; Time To Live, in ms. Optional; Defaults to 600000ms. &ndash;&gt;-->
+    <!--<param-name>ttl</param-name>-->
+    <!--<param-value>100000</param-value>-->
+    <!--</init-param>-->
+    <!--</servlet>-->
+    <!--<servlet-mapping>-->
+    <!--<servlet-name>StickyCaptcha</servlet-name>-->
+    <!--<url-pattern>/stickyCaptcha.png</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+
+</web-app>
