@@ -1,0 +1,1 @@
+<script src="${ctx}/static/bootstrap/2.3.2/js/bootstrap-paginator.min.js" type="text/javascript"></script>
